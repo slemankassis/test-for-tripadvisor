@@ -1,34 +1,10 @@
-import React from "react";
-import { useParams } from "react-router-dom";
-import { useQuery, gql } from "@apollo/client";
-
-const GET_CHARACTER = gql`
-  query GetCharacter($id: ID!) {
-    character(id: $id) {
-      id
-      name
-      status
-      species
-      type
-      gender
-      origin {
-        name
-        type
-        dimension
-      }
-      location {
-        name
-        type
-        dimension
-      }
-      image
-    }
-  }
-`;
+import React, { useParams } from "react-router-dom";
+import { useQuery } from "@apollo/client";
+import { GET_CHARACTERS } from "../../graphql/queries";
 
 function CharacterDetail() {
   const { id } = useParams<{ id: string }>();
-  const { loading, error, data } = useQuery(GET_CHARACTER, {
+  const { loading, error, data } = useQuery(GET_CHARACTERS, {
     variables: { id },
   });
 

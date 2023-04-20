@@ -1,24 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { useQuery, gql } from "@apollo/client";
-
-const GET_CHARACTERS = gql`
-  query GetCharacters($page: Int!) {
-    characters(page: $page) {
-      info {
-        count
-        pages
-        next
-        prev
-      }
-      results {
-        id
-        name
-        image
-      }
-    }
-  }
-`;
+import { useQuery } from "@apollo/client";
+import { GET_CHARACTERS } from "../../graphql/queries";
 
 function CharacterList() {
   const [page, setPage] = useState(1);
