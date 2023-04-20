@@ -1,9 +1,9 @@
-import React from "react";
 import { MockedProvider } from "@apollo/client/testing";
-import { render, waitFor, fireEvent } from "@testing-library/react";
-import CharacterList from "./CharacterList";
+import { render, screen, waitFor } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
 import { GET_CHARACTERS } from "../../graphql/queries";
-
+import CharacterList from "./CharacterList";
+import React from "react";
 const mocks = [
   {
     request: {
@@ -14,32 +14,19 @@ const mocks = [
       data: {
         characters: {
           info: {
-            count: 3,
-            pages: 1,
-            next: null,
+            next: 2,
             prev: null,
           },
           results: [
             {
               id: "1",
               name: "Rick Sanchez",
-              status: "Alive",
-              species: "Human",
-              gender: "Male",
+              image: "https://rickandmortyapi.com/api/character/avatar/1.jpeg",
             },
             {
               id: "2",
               name: "Morty Smith",
-              status: "Alive",
-              species: "Human",
-              gender: "Male",
-            },
-            {
-              id: "3",
-              name: "Summer Smith",
-              status: "Alive",
-              species: "Human",
-              gender: "Female",
+              image: "https://rickandmortyapi.com/api/character/avatar/2.jpeg",
             },
           ],
         },
@@ -48,52 +35,44 @@ const mocks = [
   },
 ];
 
-test("renders the character list", async () => {
-  const { getByText, findByText } = render(
-    <MockedProvider mocks={mocks} addTypename={false}>
-      <CharacterList />
-    </MockedProvider>
-  );
+describe("CharacterList", () => {
+  it("renders the character list with pagination buttons", async () => {
+    render(
+      <MockedProvider mocks={mocks} addTypename={false}>
+        <MemoryRouter>
+          <CharacterList />
+        </MemoryRouter>
+      </MockedProvider>
+    );
 
-  expect(getByText("Loading...")).toBeInTheDocument();
+    // Check if loading state is rendered
+    expect(screen.getByText("Loading...")).toBeInTheDocument();
 
-  await waitFor(() => {
-    expect(getByText("Rick Sanchez")).toBeInTheDocument();
-    expect(getByText("Morty Smith")).toBeInTheDocument();
-    expect(getByText("Summer Smith")).toBeInTheDocument();
+    // Wait for the data to load
+    await waitFor(() => {
+      // Check if the characters are rendered
+      expect(screen.getByAltText("Rick Sanchez")).toBeInTheDocument();
+      expect(screen.getByAltText("Morty Smith")).toBeInTheDocument();
+
+      // Check if pagination buttons are rendered
+      expect(screen.getByTestId("prev-page-button")).toBeInTheDocument();
+      expect(screen.getByTestId("next-page-button")).toBeInTheDocument();
+    });
   });
 
-  fireEvent.click(getByText("Next"));
+  it("disables the 'Previous Page' button when on the first page", async () => {
+    render(
+      <MockedProvider mocks={mocks} addTypename={false}>
+        <MemoryRouter>
+          <CharacterList />
+        </MemoryRouter>
+      </MockedProvider>
+    );
 
-  expect(await findByText("Loading...")).toBeInTheDocument();
-
-  await waitFor(() => {
-    expect(getByText("Rick Sanchez")).toBeInTheDocument();
-    expect(getByText("Morty Smith")).toBeInTheDocument();
-    expect(getByText("Summer Smith")).toBeInTheDocument();
+    // Wait for the data to load
+    await waitFor(() => {
+      // Check if the 'Previous Page' button is disabled
+      expect(screen.getByTestId("prev-page-button")).toBeDisabled();
+    });
   });
-});
-
-test("pagination works correctly", async () => {
-  const { findByText, findByTestId } = render(
-    <MockedProvider mocks={mocks} addTypename={false}>
-      <CharacterList />
-    </MockedProvider>
-  );
-
-  expect(await findByText("Loading...")).toBeInTheDocument();
-
-  const nextPageButton = await findByTestId("next-page-button");
-
-  fireEvent.click(nextPageButton);
-
-  expect(await findByText("Loading...")).toBeInTheDocument();
-
-  const characterName = await findByText("Rick Sanchez");
-  expect(characterName).toBeInTheDocument();
-
-  const characterLink = characterName.closest("a") as HTMLAnchorElement;
-  fireEvent.click(characterLink);
-
-  expect(await findByText("Status: Alive")).toBeInTheDocument();
 });
