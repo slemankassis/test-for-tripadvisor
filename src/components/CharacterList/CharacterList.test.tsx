@@ -61,6 +61,20 @@ test("renders character list correctly", async () => {
   expect(await findByAltText("Morty Smith")).toBeInTheDocument();
 });
 
+const findByTextContent = (container: HTMLElement, text: string) => {
+  const elements = Array.from(container.querySelectorAll("*"));
+
+  return Promise.all(
+    elements.map((element) => {
+      if (element.textContent === text) {
+        return element;
+      }
+
+      return null;
+    })
+  ).then((foundElements) => foundElements.filter(Boolean)[0]);
+};
+
 test("pagination works correctly", async () => {
   const { findByText, findByTestId } = render(
     <MockedProvider mocks={mocks} addTypename={false}>
@@ -76,6 +90,12 @@ test("pagination works correctly", async () => {
 
   expect(await findByText("Loading...")).toBeInTheDocument();
 
-  expect(await findByText("Rick Sanchez")).toBeInTheDocument();
-  expect(await findByText("Morty Smith")).toBeInTheDocument();
+  const characterName = await findByTextContent(document.body, "Rick Sanchez");
+  expect(characterName).toBeInTheDocument();
+
+  const characterLink = characterName?.closest("a") as HTMLAnchorElement;
+
+  fireEvent.click(characterLink);
+
+  expect(await findByText("Status: Alive")).toBeInTheDocument();
 });

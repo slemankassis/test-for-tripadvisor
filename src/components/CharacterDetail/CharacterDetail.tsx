@@ -1,10 +1,10 @@
 import React, { useParams } from "react-router-dom";
 import { useQuery } from "@apollo/client";
-import { GET_CHARACTERS } from "../../graphql/queries";
+import { GET_CHARACTER } from "../../graphql/queries";
 
 function CharacterDetail() {
   const { id } = useParams<{ id: string }>();
-  const { loading, error, data } = useQuery(GET_CHARACTERS, {
+  const { loading, error, data } = useQuery(GET_CHARACTER, {
     variables: { id },
   });
 

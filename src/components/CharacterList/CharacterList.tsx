@@ -25,12 +25,14 @@ function CharacterList() {
       <button
         onClick={() => setPage(page - 1)}
         disabled={!data.characters.info.prev}
+        data-testid="next-page-button"
       >
         Previous Page
       </button>
       <button
         onClick={() => setPage(page + 1)}
         disabled={!data.characters.info.next}
+        data-testid="prev-page-button"
       >
         Next Page
       </button>
