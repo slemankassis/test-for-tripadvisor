@@ -2,8 +2,8 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
-import CharacterList from "./CharacterList";
-import CharacterDetail from "./CharacterDetail";
+import CharacterList from "./components/CharacterList";
+import CharacterDetail from "./components/CharacterDetail";
 
 const client = new ApolloClient({
   uri: "https://rickandmortyapi.com/graphql",
