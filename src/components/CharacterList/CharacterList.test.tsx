@@ -1,9 +1,10 @@
+import React from "react";
 import { MockedProvider } from "@apollo/client/testing";
 import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { GET_CHARACTERS } from "../../graphql/queries";
 import CharacterList from "./CharacterList";
-import React from "react";
+
 const mocks = [
   {
     request: {

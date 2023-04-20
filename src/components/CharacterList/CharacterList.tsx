@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@apollo/client";
 import { GET_CHARACTERS } from "../../graphql/queries";
+import { Character } from "../../graphql/types";
 
 function CharacterList() {
   const [page, setPage] = useState(1);
@@ -14,7 +15,7 @@ function CharacterList() {
 
   return (
     <div>
-      {data.characters.results.map((character: any) => (
+      {data.characters.results.map((character: Character) => (
         <div key={character.id}>
           <Link to={`/characters/${character.id}`}>
             <img src={character.image} alt={character.name} />
